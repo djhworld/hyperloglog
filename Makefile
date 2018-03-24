@@ -1,2 +1,2 @@
 github:
-	hugo -b "https://djhworld.github.io/hyperloglog"
+	HUGO_CANONIFYURLS=true hugo -b "https://djhworld.github.io/hyperloglog" 
