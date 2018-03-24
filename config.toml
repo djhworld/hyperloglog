@@ -1,4 +1,4 @@
-baseurl = "https://fa9cdcf7.eu.ngrok.io"
+baseurl = "localhost:1313"
 languageCode = "en-us"
 title = "HyperLogLog playground"
 theme = "daniel"

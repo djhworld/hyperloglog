@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on HyperLogLog playground</title>
-    <link>https://fa9cdcf7.eu.ngrok.io/tags/</link>
+    <link>https://djhworld.github.io/hyperloglog/tags/</link>
     <description>Recent content in Tags on HyperLogLog playground</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="https://fa9cdcf7.eu.ngrok.io/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://djhworld.github.io/hyperloglog/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
