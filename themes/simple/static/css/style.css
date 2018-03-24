@@ -1,0 +1,26 @@
+#registers table td {
+    padding:3px;
+    font-size:10px;
+    text-align: center;
+    font-weight:bold;
+    font-family:monospace;
+}
+
+#registers table td:hover {
+    background-color:yellow;
+    cursor: crosshair;
+}
+
+.register-on {
+    background-color:#dedede;
+}
+
+.register-off {
+    background-color:white;
+    border-color: #dedede;
+    color:#dedede;
+}
+
+.error {
+    color: #007700;
+}

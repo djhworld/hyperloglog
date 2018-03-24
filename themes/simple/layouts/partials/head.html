@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="{{ with .Site.LanguageCode }}{{ . }}{{ else }}en-US{{ end }}">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>{{ .Title }}{{ if not .IsHome }} &middot; {{ .Site.Title }}{{ end }}</title>
+    {{ with .Site.Params.name }}<meta name="author" content="{{ . }}">{{ end }}
+    {{ with .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
+
+    <link rel="stylesheet" href="{{ .Site.BaseURL}}/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ .Site.BaseURL}}/css/style.css" />
+    <link rel="stylesheet" href="{{ .Site.BaseURL}}/css/katex.min.css" />
+
+<script type="text/javascript" src="{{ .Site.BaseURL}}/js/jquery.min.js"></script>
+<script type="text/javascript" src="{{ .Site.BaseURL}}/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{ .Site.BaseURL}}/js/Chart.min.js"></script>
+<script type="text/javascript" src="{{ .Site.BaseURL}}/js/chartjs-plugin-annotation.min.js"></script>
+<script type="text/javascript" src="{{ .Site.BaseURL}}/js/vue.min.js"></script>
+<script type="text/javascript" src="{{ .Site.BaseURL}}/js/murmurhash3.js"></script>
+<script type="text/javascript" src="{{ .Site.BaseURL}}/js/hyperloglog.js"></script>
+<script type="text/javascript" src="{{ .Site.BaseURL}}/js/charting.js"></script>
+
+
+</head>

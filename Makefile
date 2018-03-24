@@ -1,2 +1,2 @@
 github:
-	hugo -b "https://djhworld.github.io/hyperloglog/"
+	hugo -b "https://djhworld.github.io/hyperloglog"

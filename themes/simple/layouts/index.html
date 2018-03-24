@@ -1,0 +1,16 @@
+{{ partial "head" . }}
+
+<body class="home-template">
+    {{ partial "header" . }} {{ partial "navigation" . }}
+
+    <div class="container">
+        <main class="content" role="main">
+            <!-- have to do this -->
+            {{partial "homepage.md" . | markdownify }}
+        </main>
+    </div>
+
+    {{ partial "footer" . }}
+</body>
+
+</html>

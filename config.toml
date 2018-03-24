@@ -1,7 +1,7 @@
 baseurl = "localhost:1313"
 languageCode = "en-us"
 title = "HyperLogLog playground"
-theme = "daniel"
+theme = "simple"
 publishDir = "docs"
 
 [permalinks]
