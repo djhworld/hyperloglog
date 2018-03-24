@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>HyperLogLog playground</title>
+    <link>https://fa9cdcf7.eu.ngrok.io/</link>
+    <description>Recent content on HyperLogLog playground</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 24 Jan 2018 20:32:47 +0000</lastBuildDate>
+    
+	<atom:link href="https://fa9cdcf7.eu.ngrok.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>about</title>
+      <link>https://fa9cdcf7.eu.ngrok.io/about/</link>
+      <pubDate>Wed, 24 Jan 2018 20:32:47 +0000</pubDate>
+      
+      <guid>https://fa9cdcf7.eu.ngrok.io/about/</guid>
+      <description>About This website was made with love by me.
+Rationale I made it because I got so wrapped up in reading about this stuff, that I started to make the count page early on, mainly because I was having trouble picturing it all. Mathematics isn&amp;rsquo;t my strongest card, so it took me a while to at least get a fairly reasonable understanding of the core ideas.
+Maybe it won&amp;rsquo;t be useful to others, maybe nobody will care, but who knows, at least it gave me a chance to brush up a little on my Javascript.</description>
+    </item>
+    
+    <item>
+      <title>counting</title>
+      <link>https://fa9cdcf7.eu.ngrok.io/counting/</link>
+      <pubDate>Wed, 24 Jan 2018 20:32:47 +0000</pubDate>
+      
+      <guid>https://fa9cdcf7.eu.ngrok.io/counting/</guid>
+      <description>Counting loading  This algorithm approximates the number of unique items (cardinality) of a multiset. This is achieved by using a hash function that is applied to every element that is to be counted. The algorithm observes the maximum number of leading zeros that occur for all hash values, where intuitively hash values with more leading zeros are less likely and indicate a larger cardinality.    Inputs   Insert 1,000,000 random records with a given cardinality of.</description>
+    </item>
+    
+    <item>
+      <title>inserting</title>
+      <link>https://fa9cdcf7.eu.ngrok.io/adding/</link>
+      <pubDate>Wed, 24 Jan 2018 20:32:47 +0000</pubDate>
+      
+      <guid>https://fa9cdcf7.eu.ngrok.io/adding/</guid>
+      <description>Adding The core of a HyperLogLog instance consists of:
+ a series of registers (), sometimes implemented as an array a precision () argument, usually between 4 and 16, specified on creation  The precision determines how many registers there are available More registers reduce the error in the count, at the expense of more memory   a hash function () which hashes the data into a 32-bit integer  Adding an item might ultimately end up changing the state of the registers, as you will see below.</description>
+    </item>
+    
+    <item>
+      <title>more</title>
+      <link>https://fa9cdcf7.eu.ngrok.io/more/</link>
+      <pubDate>Wed, 24 Jan 2018 20:32:47 +0000</pubDate>
+      
+      <guid>https://fa9cdcf7.eu.ngrok.io/more/</guid>
+      <description>More This website only touches upon the details of the original paper, since it was released, some improvements have been made such as HyperLogLog++, which
+ Uses 64-bit rather than 32-bit integers Introduces sparse representation for the registers to save memory (rather than having one huge array) Introduces a further set of bias corrections to improve the count at lower cardinalities  Seen out in the wild  Redis PF* commands use HyperLogLog PrestoDB approx_distinct SQL function uses HyperLogLog Github topic page for some implementations of HyperLogLog  Background reading  Using Linear Counting, LogLog, and HyperLogLog to Estimate Cardinality Damn Cool Algorithms: Cardinality estimation  Previous research HyperLogLog builds on the shoulders of:</description>
+    </item>
+    
+  </channel>
+</rss>

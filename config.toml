@@ -1,0 +1,14 @@
+baseurl = "https://fa9cdcf7.eu.ngrok.io"
+languageCode = "en-us"
+title = "HyperLogLog playground"
+theme = "daniel"
+publishDir = "docs"
+
+[permalinks]
+    post = ":section/:year/:month/:day/:title/"
+
+[params]
+	title = "HyperLogLog playground"
+	subtitle = ""
+	copyright = "Released under the MIT license."
+	pageNotFoundTitle = "404 - Page not found"

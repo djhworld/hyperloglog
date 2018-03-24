@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>more &middot; HyperLogLog playground</title>
+    
+    
+
+    <link rel="stylesheet" href="https://fa9cdcf7.eu.ngrok.io/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fa9cdcf7.eu.ngrok.io/css/style.css" />
+    <link rel="stylesheet" href="https://fa9cdcf7.eu.ngrok.io/css/katex.min.css" />
+
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/Chart.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/chartjs-plugin-annotation.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/vue.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/murmurhash3.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/hyperloglog.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/charting.js"></script>
+
+
+</head>
+
+
+<body class="home-template">
+    <header id="site-head">
+</header>
+     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">H</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+               <li class="nav-item">
+                    <a class="nav-link" href="/" title="Inserting data">Home</a>
+                </li>
+               <li class="nav-item">
+                    <a class="nav-link" href="/adding" title="Adding data">Add</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/counting" title="HyperLogLog playground">Count</a>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/more" title="HyperLogLog playground">More</a>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <br/>
+
+
+
+    <div class="container">
+        <main class="content" role="main">
+            
+<article class="post">
+    <section class="post-content">
+        
+
+<h1 id="more">More</h1>
+
+<p>This website only touches upon the details of the original paper, since it was released, some improvements have been made such as <a href="https://research.google.com/pubs/pub40671.html">HyperLogLog++</a>, which</p>
+
+<ul>
+<li>Uses 64-bit rather than 32-bit integers</li>
+<li>Introduces <em>sparse</em> representation for the registers to save memory (rather than having one huge array)</li>
+<li>Introduces a further set of bias corrections to improve the count at lower cardinalities</li>
+</ul>
+
+<h2 id="seen-out-in-the-wild">Seen out in the wild</h2>
+
+<ul>
+<li>Redis <code>PF*</code> <a href="https://redis.io/commands/pfcount">commands</a> use HyperLogLog</li>
+<li>PrestoDB <code>approx_distinct</code> <a href="https://prestodb.io/docs/current/functions/aggregate.html#approx_distinct">SQL function</a> uses HyperLogLog</li>
+<li>Github <a href="https://github.com/topics/hyperloglog">topic page</a> for some implementations of HyperLogLog</li>
+</ul>
+
+<h2 id="background-reading">Background reading</h2>
+
+<ul>
+<li><a href="http://www.moderndescartes.com/essays/hyperloglog/index.html">Using Linear Counting, LogLog, and HyperLogLog to Estimate Cardinality</a></li>
+<li><a href="http://blog.notdot.net/2012/09/Dam-Cool-Algorithms-Cardinality-Estimation">Damn Cool Algorithms: Cardinality estimation</a></li>
+</ul>
+
+<h3 id="previous-research">Previous research</h3>
+
+<p>HyperLogLog builds on the shoulders of:</p>
+
+<ul>
+<li><p>LogLog</p>
+
+<ul>
+<li><a href="http://algo.inria.fr/flajolet/Publications/DuFl03-LNCS.pdf">Durand M., Flajolet P. (2003) Loglog Counting of Large Cardinalities. In: Di Battista G., Zwick U. (eds) Algorithms - ESA 2003. ESA 2003. Lecture Notes in Computer Science, vol 2832. Springer, Berlin, Heidelberg</a></li>
+</ul></li>
+
+<li><p>LinearCount</p>
+
+<ul>
+<li><a href="http://dblab.kaist.ac.kr/Publication/pdf/ACM90_TODS_v15n2.pdf">Whang, K., Vander-Zanden, B. and Taylor, H. (1990). A linear-time probabilistic counting algorithm for database applications. ACM Transactions on Database Systems, 15(2), pp.208-229.</a></li>
+</ul></li>
+</ul>
+
+    </section>
+</article>
+
+        </main>
+    </div>
+
+    <footer class="site-footer">
+	<div class="inner">
+	</div>
+</footer>
+
+</body>
+
+</html>

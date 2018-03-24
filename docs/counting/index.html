@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>counting &middot; HyperLogLog playground</title>
+    
+    
+
+    <link rel="stylesheet" href="https://fa9cdcf7.eu.ngrok.io/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fa9cdcf7.eu.ngrok.io/css/style.css" />
+    <link rel="stylesheet" href="https://fa9cdcf7.eu.ngrok.io/css/katex.min.css" />
+
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/jquery.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/Chart.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/chartjs-plugin-annotation.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/vue.min.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/murmurhash3.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/hyperloglog.js"></script>
+<script type="text/javascript" src="https://fa9cdcf7.eu.ngrok.io/js/charting.js"></script>
+
+
+</head>
+
+
+<body class="home-template">
+    <header id="site-head">
+</header>
+     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">H</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+               <li class="nav-item">
+                    <a class="nav-link" href="/" title="Inserting data">Home</a>
+                </li>
+               <li class="nav-item">
+                    <a class="nav-link" href="/adding" title="Adding data">Add</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/counting" title="HyperLogLog playground">Count</a>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/more" title="HyperLogLog playground">More</a>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <br/>
+
+
+
+    <div class="container">
+        <main class="content" role="main">
+            
+<article class="post">
+    <section class="post-content">
+        <div id="loading" class="row">
+    <div class="col">
+        <h1>Counting <small style="font-size:16px; font-style:italic;" v-if="isProcessing">loading <img src="/img/ajax-loader.gif" /></small></h1>
+        <p style="text-align: justify">
+            <i>This algorithm approximates the number of unique items (<i>cardinality</i>) of a multiset. This is achieved by using a hash function that is applied to every element
+                that is to be counted. The algorithm observes the maximum number of leading zeros that occur for all hash
+                values, where intuitively hash values with more leading zeros are less likely and indicate a larger cardinality.</i>
+        </p>
+    </div>
+</div>
+<hr/>
+
+<div id="app">
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Inputs</h4>
+            <p>
+                <small>
+                    <i>Insert 1,000,000 random records with a given cardinality of...</i>
+                </small>
+            </p>
+            <div class="button-group">
+                <button v-for="c in cardinality_examples" type="button" v-bind:title="'Insert dataset with cardinality ' + c" v-bind:value="c"
+                    v-bind:class="[selectedCard === c ? 'btn btn-primary': 'btn btn-link']" v-on:click="random_unique(c)">{{c}}</button>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h4>Precision</h4>
+            <p>
+                <small>
+                    <i>Smaller will give a worse estimate</i>
+                </small>
+            </p>
+            <div>
+                <span style="float:right; color:#aeaeae">
+                    <small>less error, more memory &rarr;</small>
+                </span>
+                <span style="float:left; color:#aeaeae">
+                    <small>&larr;greater error, less memory</small>
+                </span>
+            </div>
+
+            <input class="form-control" type="range" min="4" max="16" step="1" id="slider" v-model="precision" v-on:change="random_unique()"
+            />
+            <output id="precision">{{precision}}</output>
+
+        </div>
+    </div>
+    <hr/>
+
+
+    <div id="estimate" class="row" v-if="result !== null">
+        <div class="col">
+            <h3>Result</h3>
+
+            <table class="table">
+                <tr class="table-info">
+                    <td>
+                        <strong>Estimate (<span v-html="KATEX_RENDERS['E']"></span>)</strong>
+                    </td>
+                    <td>{{Math.round(result.estimate, 0)}}
+                        <span v-if="result.correction_used">*</span>
+                        <small class="error">({{(((( Math.round(result.estimate, 0) - result.actual_cardinality)/result.actual_cardinality) *
+                            100.0)).toFixed(2)}}% error) </small>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td width="200px">
+                        <strong>Registers (<span v-html="KATEX_RENDERS['m']"></span>)</strong>
+                    </td>
+                    <td width="200px">{{result.m}}</td>
+                    <td>The number of
+                        <a href="#registers-section">registers</a> used.</td>
+                </tr>
+                <tr class="table">
+                    <td>
+                        <strong>Memory used</strong>
+                    </td>
+                    <td>
+                        {{result.m*8}}
+                    </td>
+                    <td>bytes</td>
+                </tr>
+            </table>
+            <span v-if="result.correction_used">*
+                <i>Estimate has been
+                    <a href="#corrections">corrected</a> using {{result.correction_used.name}}</i>
+            </span>
+        </div>
+    </div>
+    <hr v-if="result !== null" />
+    <div id="calculation" class="row" v-if="result !== null">
+        <div class="col">
+            <h3>Calculation</h3>
+            <p>The cardinality (<span v-html="KATEX_RENDERS['E']"></span>) is estimated by the formula
+                <span v-html="KATEX_RENDERS['cardinality_estimation']"></span>
+            </p>
+            <table class="table">
+                <tr>
+                    <td width="200px">
+                        <!--{{console.log("a_m = " + katex.renderToString("a_m"))}}-->
+                        <span v-html="KATEX_RENDERS['a_m']"></span>
+                    </td>
+                    <td width="200px">{{result.alpha_m}}</td>
+                    <td>A constant used to correct a systematic multiplicative bias</td>
+                </tr>
+                <tr>
+                    <td>
+                        <!--{{console.log("m^2 = " + katex.renderToString("m^2"))}}-->
+                        <span v-html="KATEX_RENDERS['m^2']"></span>
+                    </td>
+                    <td>{{Math.pow(result.m, 2.0)}}</td>
+                    <td>The number of registers (<span v-html="KATEX_RENDERS['m']"></span>) squared</td>
+                </tr>
+                <tr>
+                    <td>
+                        <!--{{console.log("Z = " + katex.renderToString("Z"))}}-->
+                        <span v-html="KATEX_RENDERS['Z']"></span>
+                    </td>
+                    <td>{{result.z}}</td>
+                    <td>The
+                        <a href="https://en.wikipedia.org/wiki/HyperLogLog#Count" target="new">harmonic mean</a> of the registers</td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+    <hr v-if="result != null && result.correction_used" />
+    <div id="corrections" class="row" v-if="result !== null">
+        <div class="col" v-if="result.correction_used">
+            <h3>Corrections</h3>
+            <a name="corrections" />
+            <p>For certain cardinalities, the above calculation yields an incorrect result, so HyperLogLog applies a measure
+                to correct this</p>
+            <table class="table">
+                <tr>
+                    <td width="200px">
+                        <strong>Original estimate (<span v-html="KATEX_RENDERS['E']"></span>)</strong>
+                    </td>
+                    <td>{{result.originalEstimate}}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Correction Method</strong>
+                    </td>
+                    <td>{{result.correction_used.name}}
+                        <small v-if="result.correction_used.name == 'LinearCount'">(load factor = {{result.correction_used.metadata.FillFactor}})</small>
+                    </td>
+                </tr>
+            </table>
+            <div v-if="result.correction_used.name === 'LinearCount'">
+                <h5>Linear Count</h5>
+                <p>
+                    <a href="http://dblab.kaist.ac.kr/Publication/pdf/ACM90_TODS_v15n2.pdf">Linear Count</a> is a simple counting algorithm that considers the
+                    <i>load factor</i> of the registers. A low
+                    <i>load factor</i> indicates the probability of
+                    <u>collisions</u> is low, and the cardinality can be estimated by counting the number of registers that
+                    are empty (<span v-html="KATEX_RENDERS['V']"></span>), and applying the following formula
+                    <!--{{console.log(katex.renderToString("-m \\cdot log(\\frac{V}{m})", {'displayMode': true}))}}-->
+                    <span v-html="KATEX_RENDERS['linear_count']"></span>
+                    <p>As you can see from the graph below, this gives a fairly good estimate of the cardinality when the registers
+                        are not full, but becomes more prone to error as
+                        <span v-html="KATEX_RENDERS['V']"></span> approaches 0.</p>
+                    <p>This is why HyperLogLog only uses LinearCount for smaller cardinalities.</p>
+
+                    <div id="#linearCountChart">
+                        <canvas ref="linearCountChart" id="linear-count-chart"></canvas>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+    <hr v-if="result !== null" />
+    <a name="registers-section" />
+    <div class="row" v-if="registers.length > 0">
+        <div class="col">
+            <h3>Registers
+                <small>{{result.m}}</small>
+            </h3>
+            <div id="registers" v-if="result.m > 8192">
+                <p><i>There are too many registers to display here, but you can imagine it! Try setting the precision to a lower value if you want to see the registers in action!</i></p>
+            </div>
+            <div id="registers" v-if="result.m <= 8192">
+                <p>Each register represents the maximum number of leading zeroes + 1 seen.</p>
+                <table class="table">
+                    <tr v-for="(row, rowindex) in registers">
+                        <td v-bind:title="'Register: ' + (rowindex*64+index)+ '\x0AValue: ' + value" v-for="(value,index) in row" v-bind:class="[value > 0 ? 'register-on' : 'register-off']">
+                            {{value}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+</div></div>
+<script type="text/javascript">
+    function random_unique(num) {
+        var data = {};
+        for (i = 0; i < num; i++) {
+            while (true) {
+                var r = (Math.floor(Math.random() * 1000000000) + 1).toString();
+                if (!data.hasOwnProperty(r)) {
+                    data[r] = 0;
+                    break;
+                }
+            }
+        }
+
+        var iterations = 1000000 / num;
+        var keys = Object.keys(data);
+        var result = []
+        for (i = 0; i < iterations; i++) {
+            for (q = 0; q < keys.length; q++) {
+                result.push(keys[q]);
+            }
+        }
+        return result;
+    }
+
+    //TODO move this
+    function buckets_to_rows(buckets, rowsize) {
+        var b = [[]];
+        var row = 0;
+        var i = 0;
+        for (reg in buckets) {
+            b[row].push(buckets[i])
+            i++;
+
+            if (i % rowsize == 0) {
+                row++;
+                b[row] = [];
+            }
+        }
+        return b;
+
+    }
+
+
+    const KATEX_RENDERS = {
+        "E": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base"><span class="mord mathit" style="margin-right:0.05764em;">E</span></span></span></span>',
+        "a_m": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>m</mi></msub></mrow><annotation encoding="application/x-tex">a_m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base"><span class="mord"><span class="mord mathit">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"></span></span></span></span></span></span></span></span>',
+        "m^2": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>m</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">m^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="base"><span class="mord"><span class="mord mathit">m</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>',
+        "Z": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Z</mi></mrow><annotation encoding="application/x-tex">Z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base"><span class="mord mathit" style="margin-right:0.07153em;">Z</span></span></span></span>',
+        "m": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base"><span class="mord mathit">m</span></span></span></span>',
+        "V": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base"><span class="mord mathit" style="margin-right:0.22222em;">V</span></span></span></span>',
+        "cardinality_estimation": '<span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>m</mi></msub><msup><mi>m</mi><mn>2</mn></msup><mi>Z</mi></mrow><annotation encoding="application/x-tex">a_m m^2 Z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8641079999999999em;"></span><span class="strut bottom" style="height:1.0141079999999998em;vertical-align:-0.15em;"></span><span class="base"><span class="mord"><span class="mord mathit">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight">m</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"></span></span></span></span></span><span class="mord"><span class="mord mathit">m</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641079999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord mathit" style="margin-right:0.07153em;">Z</span></span></span></span></span>',
+        "linear_count": '<span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mi>m</mi><mo>⋅</mo><mi>l</mi><mi>o</mi><mi>g</mi><mo>(</mo><mfrac><mrow><mi>V</mi></mrow><mrow><mi>m</mi></mrow></mfrac><mo>)</mo></mrow><annotation encoding="application/x-tex">-m \cdot log(\frac{V}{m})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.36033em;"></span><span class="strut bottom" style="height:2.04633em;vertical-align:-0.686em;"></span><span class="base"><span class="mord">−</span><span class="mord mathit">m</span><span class="mord rule" style="margin-right:0.2222222222222222em;"></span><span class="mbin">⋅</span><span class="mord rule" style="margin-right:0.2222222222222222em;"></span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mord mathit">o</span><span class="mord mathit" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.36033em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathit">m</span></span></span><span style="top:-3.15em;"><span class="pstrut" style="height:3em;"></span><span class="stretchy" style="height:0.2em;"><svg width="400em" height="0.2em" viewBox="0 0 400000 200" preserveAspectRatio="xMinYMin slice"><path d="M0 80H400000 v40H0z M0 80H400000 v40H0z"/></svg></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathit" style="margin-right:0.22222em;">V</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">)</span></span></span></span></span>'
+    };
+
+
+                function random_unique_update(self, c) {
+                    return new Promise(function(resolve, reject) {
+                        self.reset(null, self.precision);
+                    setTimeout(function () {
+                        console.log("before resolve");
+                        if (c != null) {
+                            self.selectedCard = c;
+                        }
+                        //if (this.cardinalityDatasets.hasOwnProperty(this.selectedCard.toString()) == false) {
+                        self.cardinalityDatasets[self.selectedCard.toString()] = random_unique(self.selectedCard);
+                        //}
+                        var data = self.cardinalityDatasets[self.selectedCard.toString()];
+
+
+                        for (var i = 0; i < data.length; i++) {
+                            self.hll.add(murmurhash3_32_gc(data[i], 100));
+                        }
+
+                        self.result = self.hll.count();
+                        self.result['actual_cardinality'] = self.selectedCard;
+                        if (self.result.m > 8192) {
+                            self.registers = [0];
+                        } else {
+                            self.registers = buckets_to_rows(self.hll.buckets, 64);
+                        }
+
+                        resolve();
+                    }, 0);
+                    });
+                }
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+    const DEFAULT_PRECISION = 10;
+    const VUEJS_BUS = new Vue();
+    var app = new Vue({
+        el: '#app',
+        data: {
+            cardinality_examples: [1, 10, 100, 1000, 10000, 100000, 1000000],
+            cardinalityDatasets: {},
+            precision: DEFAULT_PRECISION,
+            hll: HyperLogLog(DEFAULT_PRECISION),
+            result: {},
+            registers: [],
+            selectedCard: 1000
+        },
+        mounted() {
+            this.random_unique();
+        },
+        updated() {
+            if (this.result != null && this.result.correction_used != null && this.result.correction_used.name === "LinearCount") {
+                this.createChart("linear-count-chart", getLinearCountChart(this.result.m, this.result.correction_used.metadata.V));
+            }
+        },
+        methods: {
+            'reset': function (e, p) {
+                if (p && p != DEFAULT_PRECISION) {
+                    this.precision = p;
+                    this.hll = HyperLogLog(p);
+                } else {
+                    this.precision = DEFAULT_PRECISION;
+                    this.hll = HyperLogLog(DEFAULT_PRECISION);
+                }
+                this.result = null;
+                this.registers = [];
+            },
+            'random_unique': function (c) {
+                var self = this;
+                 async function asyncCall() {
+                    VUEJS_BUS.$emit('loading', true); 
+                    await sleep(200);
+                    console.log('calling');
+                    await random_unique_update(self, c);
+                    VUEJS_BUS.$emit('loading', false); 
+                    console.log("Done");
+                }
+                asyncCall();
+            },
+            'createChart': function (chartId, chartData) {
+                const ctx = document.getElementById(chartId);
+                const myChart = new Chart(ctx, {
+                    type: chartData.type,
+                    data: chartData.data,
+                    options: chartData.options,
+                });
+            }
+
+        }
+    });
+    var loading = new Vue({
+        el: '#loading',
+        data: {
+            isProcessing: false
+        },
+        mounted() {
+            var self = this;
+            VUEJS_BUS.$on('loading', (value) => self.isProcessing = value);
+        }
+    });
+</script>
+    </section>
+</article>
+
+        </main>
+    </div>
+
+    <footer class="site-footer">
+	<div class="inner">
+	</div>
+</footer>
+
+</body>
+
+</html>
