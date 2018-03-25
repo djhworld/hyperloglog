@@ -53,7 +53,7 @@ This is where HyperLogLog shines because as you've seen, the core is the registe
 
 Merging HyperLogLog instances across nodes is simply a case of merging the registers, achieved by comparing each register and taking the max. 
 
-Then the final merged instance can be used to perform the [count](counting).
+Then the final merged instance can be used to perform the [count](/counting).
 
 <figure class="figure" style="margin-top:10px; margin-bottom:10px; display:block !important">
     <img class="figure-img img-fluid" style="margin-left:auto; margin-right:auto; display:block;" src="/img/merge4.png" />
