@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <title>about &middot; HyperLogLog playground</title>
+    <title>merging &middot; HyperLogLog playground</title>
     
     
 
@@ -73,17 +73,79 @@
     <section class="post-content">
         
 
-<h1 id="about">About</h1>
+<h1 id="merging">Merging</h1>
 
-<p>This website was made with love <a href="https://djhworld.github.io/about">by me</a>.</p>
+<p>Imagine you have a bunch of logs with 1 billion lines in them. Your boss comes up, coffee cup in hand, and wants to find out how many unique IP addresses visited the website yesterday.</p>
 
-<h3 id="rationale">Rationale</h3>
+<p><em>I know this is a contrived example, but lets run with it.</em></p>
 
-<p>I made it because I got so wrapped up in reading about this stuff, that I started to make the <a href="counting">count</a> page early on, mainly because I was having trouble picturing it all. Mathematics isn&rsquo;t my strongest card, so it took me a while to at least get a fairly reasonable understanding of the core ideas.</p>
+<p>The brute force approach would be to provision a <code>set</code> data-structure, and go through the records one by one until you reach the end, then return the length of the <code>set</code> to the user.</p>
 
-<p>Maybe it won&rsquo;t be useful to others, maybe nobody will care, but who knows, at least it gave me a chance to brush up a little on my Javascript.</p>
+<figure class="figure" style="margin-top:10px; margin-bottom:10px;">
+    <img class="figure-img img-fluid" src="https://djhworld.github.io/hyperloglog/img/merge1.png" />
+</figure>
 
-<p>Spot an issue? Contact me via any of the methods <a href="https://djhworld.github.io/about">on here</a></p>
+<p>As you can imagine, this has problems</p>
+
+<ul>
+<li>It&rsquo;s slow.</li>
+<li>It&rsquo;s memory consuming
+
+<ul>
+<li>If you were lucky (cursed?) enough to even have 100 million unique visitors, that would consume 3.2GB of memory alone!</li>
+</ul></li>
+</ul>
+
+<h2 id="parallel">Parallel</h2>
+
+<p>So to speed things up, you run your <code>count(distinct(ip))</code> operation using a parallel approach.</p>
+
+<p>Theoretically this is the same as the serial method, each worker processes a subset of the data and builds up a <code>set</code> of IP addresses. However, there&rsquo;s a pinch point in the operation where you eventually need to merge all your <code>sets</code> from all the nodes into one so you can determine the unique count.</p>
+
+<figure class="figure" style="margin-top:10px; margin-bottom:10px;">
+    <img class="figure-img img-fluid" src="https://djhworld.github.io/hyperloglog/img/merge2.png" />
+</figure>
+
+<p>This is a much better approach than the brute force solution above, but it suffers from</p>
+
+<ul>
+<li>Memory consumption</li>
+<li>Bandwidth heavy
+
+<ul>
+<li>Shuffling those sets between the workers is expensive, especially if they are on separate machines</li>
+</ul></li>
+</ul>
+
+<h2 id="approximation">Approximation</h2>
+
+<p>You ask your boss, do you need <em>an exact count</em> or just an approximate.</p>
+
+<p>With figures like number of unique IP addresses, does it really matter if you&rsquo;re a slight bit out from the real number?</p>
+
+<p>This is where HyperLogLog shines because as you&rsquo;ve seen, the core is the registers is just an array of bytes. With the top precision (16) making 65,536 registers available for use, the memory used is just 512KiB[1]</p>
+
+<figure class="figure" style="margin-top:10px; margin-bottom:10px;">
+    <img class="figure-img img-fluid" src="https://djhworld.github.io/hyperloglog/img/merge3.png" />
+</figure>
+
+<p>Merging HyperLogLog instances across nodes is simply a case of merging the registers, achieved by comparing each register and taking the max.</p>
+
+<p>Then the final merged instance can be used to perform the <a href="counting">count</a>.</p>
+
+<figure class="figure" style="margin-top:10px; margin-bottom:10px; display:block !important">
+    <img class="figure-img img-fluid" style="margin-left:auto; margin-right:auto; display:block;" src="https://djhworld.github.io/hyperloglog/img/merge4.png" />
+</figure>
+
+<p>This</p>
+
+<ul>
+<li>Uses a lot less memory</li>
+<li>Uses a lot less bandwidth</li>
+<li>Is much faster.</li>
+</ul>
+
+<p>[1] Note that some implementations of HyperLogLog use a <em>sparse</em> representation of the registers, which saves even more memory. See HyperLogLog++</p>
 
     </section>
 </article>

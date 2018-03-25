@@ -8,7 +8,7 @@ date = "2018-01-24T20:32:47Z"
 
 This website only touches upon the details of the original paper, since it was released, some improvements have been made such as [HyperLogLog++](https://research.google.com/pubs/pub40671.html), which
 
-* Uses 64-bit rather than 32-bit integers
+* Uses 64-bit integers rather than 32-bit
 * Introduces _sparse_ representation for the registers to save memory (rather than having one huge array)
 * Introduces a further set of bias corrections to improve the count at lower cardinalities 
 
@@ -33,4 +33,3 @@ HyperLogLog builds on the shoulders of:
 
 * LinearCount
   * [Whang, K., Vander-Zanden, B. and Taylor, H. (1990). A linear-time probabilistic counting algorithm for database applications. ACM Transactions on Database Systems, 15(2), pp.208-229.](http://dblab.kaist.ac.kr/Publication/pdf/ACM90_TODS_v15n2.pdf)
-

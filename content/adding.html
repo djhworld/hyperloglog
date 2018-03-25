@@ -38,9 +38,9 @@ date = "2018-01-24T20:32:47Z"
     <p>Use the tool below to see what happens when you add an item into HyperLogLog</p>
     <div class="row" style="border:1px solid #000; padding:20px; margin-top:5px; margin-bottom:10px; border-radius:4px;">
         <div class="col-md-6">
-            <h4>Insert</h4>
+            <h4>Insert (<span v-html="KATEX_RENDERS['v']"></span>)</h4>
             <div class="form-group">
-                <input class="form-control" v-model="data" type="text" />
+                <input placeholder="a value to insert into hyperloglog" class="form-control" v-model="data" type="text" />
 
                 <button class="btn btn-primary float-right" v-on:click="add">Add</button>
                 <button class="btn btn-secondary float-right" style="margin-right:4px;" v-on:click="random">Random</button>

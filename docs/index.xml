@@ -42,13 +42,24 @@ Maybe it won&amp;rsquo;t be useful to others, maybe nobody will care, but who kn
     </item>
     
     <item>
+      <title>merging</title>
+      <link>https://djhworld.github.io/hyperloglog/merging/</link>
+      <pubDate>Wed, 24 Jan 2018 20:32:47 +0000</pubDate>
+      
+      <guid>https://djhworld.github.io/hyperloglog/merging/</guid>
+      <description>Merging Imagine you have a bunch of logs with 1 billion lines in them. Your boss comes up, coffee cup in hand, and wants to find out how many unique IP addresses visited the website yesterday.
+I know this is a contrived example, but lets run with it.
+The brute force approach would be to provision a set data-structure, and go through the records one by one until you reach the end, then return the length of the set to the user.</description>
+    </item>
+    
+    <item>
       <title>more</title>
       <link>https://djhworld.github.io/hyperloglog/more/</link>
       <pubDate>Wed, 24 Jan 2018 20:32:47 +0000</pubDate>
       
       <guid>https://djhworld.github.io/hyperloglog/more/</guid>
       <description>More This website only touches upon the details of the original paper, since it was released, some improvements have been made such as HyperLogLog++, which
- Uses 64-bit rather than 32-bit integers Introduces sparse representation for the registers to save memory (rather than having one huge array) Introduces a further set of bias corrections to improve the count at lower cardinalities  Seen out in the wild  Redis PF* commands use HyperLogLog PrestoDB approx_distinct SQL function uses HyperLogLog Github topic page for some implementations of HyperLogLog  Background reading  Using Linear Counting, LogLog, and HyperLogLog to Estimate Cardinality Damn Cool Algorithms: Cardinality estimation  Previous research HyperLogLog builds on the shoulders of:</description>
+ Uses 64-bit integers rather than 32-bit Introduces sparse representation for the registers to save memory (rather than having one huge array) Introduces a further set of bias corrections to improve the count at lower cardinalities  Seen out in the wild  Redis PF* commands use HyperLogLog PrestoDB approx_distinct SQL function uses HyperLogLog Github topic page for some implementations of HyperLogLog  Background reading  Using Linear Counting, LogLog, and HyperLogLog to Estimate Cardinality Damn Cool Algorithms: Cardinality estimation  Previous research HyperLogLog builds on the shoulders of:</description>
     </item>
     
   </channel>
