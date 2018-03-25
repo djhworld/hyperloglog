@@ -11,7 +11,7 @@ This website was made with love [by me](https://djhworld.github.io/about).
 
 ### Rationale
 
-I made it because I got so wrapped up in reading about this stuff, that I started to make the [count](counting) page early on, mainly because I was having trouble picturing it all. Mathematics isn't my strongest card, so it took me a while to at least get a fairly reasonable understanding of the core ideas.
+I made it because I got so wrapped up in reading about this stuff, that I started to make the [count](/counting) page early on, mainly because I was having trouble picturing it all. Mathematics isn't my strongest card, so it took me a while to at least get a fairly reasonable understanding of the core ideas.
 
 Maybe it won't be useful to others, maybe nobody will care, but who knows, at least it gave me a chance to brush up a little on my Javascript.
 
