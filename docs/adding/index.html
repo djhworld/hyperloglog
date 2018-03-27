@@ -83,8 +83,9 @@
             </ul>
         </li>
         <li>a <i>hash function</i> (<span v-html="KATEX_RENDERS['h_v']"></span>) which hashes the data into a 32-bit integer
-        
     </ul>
+
+    <p>The aim of HyperLogLog is to estimate the cardinality (<span v-html="KATEX_RENDERS['E']"></span>) based on the current state of the registers.</p>
     
     <p>Adding an item might ultimately end up changing the state of the registers, as you will see below.</p>
 
@@ -92,7 +93,9 @@
         <div class="col">
             <h3>Diagram</h3>
             <p>Hopefully this diagram will explain the steps that occur during an add operation. If not, maybe the <a href="#playground-section">playground below</a> might give you some intuition.</p>
-            <img src="https://djhworld.github.io/hyperloglog/img/inserting.png" />
+            <figure class="figure" style="margin-top:10px; margin-bottom:10px; display:block !important">
+                <img class="figure-img img-fluid" style="margin-left:auto; margin-right:auto; display:block;" src="https://djhworld.github.io/hyperloglog/img/inserting.png" />
+            </figure>
         </div>
     </div>
     <br/>
@@ -167,9 +170,9 @@
                 <tr>
                     <td v-html="KATEX_RENDERS['w']"></td>
                     <td>{{result.w}}</td>
-
                     <td>The number of leading zeroes + 1<br/> of the remaining {{32-result.p}} bits</td>
                 </tr>
+
 
                 <tr>
                     <td v-html="KATEX_RENDERS['m[idx]']+' updated?'"></td>
@@ -179,6 +182,11 @@
                     </td>
                     <td></td>
                 </tr>
+                <tr>
+                    <td v-html="KATEX_RENDERS['E']"></td>
+                    <td>{{result.E}}</td>
+                    <td>The <a href="https://djhworld.github.io/hyperloglog/counting">approximate cardinality</a></td>
+                </tr>
             </table>
         </div>
     </div>
@@ -186,9 +194,12 @@
     <a name="registers-section" />
     <div class="row" v-if="registers.length > 0">
         <div class="col">
-            <h3>Registers</h3>
+            <h3>Registers <small>{{result.m}}</small></h3>
             <p>Each register represents the maximum number of leading zeroes + 1 seen.</p>
-            <div id="registers">
+            <div id="registers" v-if="result.m > 8192">
+                <p><i>There are too many registers to display here, but you can imagine it! Try setting the precision to a lower value if you want to see the registers in action!</i></p>
+            </div>
+            <div id="registers" v-if="registers.length <= 8192">
                 <table class="table">
                     <tr v-for="(row, rowindex) in registers">
                         <td v-bind:title="'Register: ' + (rowindex*64+index)+ '\x0AValue: ' + value" v-for="(value,index) in row" v-bind:class="[value > 0 ? 'register-on' : 'register-off']">
@@ -204,6 +215,7 @@
 
 <script type="text/javascript">
     const KATEX_RENDERS = {
+        "E": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>E</mi></mrow><annotation encoding="application/x-tex">E</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base"><span class="mord mathit" style="margin-right:0.05764em;">E</span></span></span></span>',
         "h_v": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>h</mi><mo>(</mo><mi>v</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">h(v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base"><span class="mord mathit">h</span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span>',
         "v": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>v</mi></mrow><annotation encoding="application/x-tex">v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base"><span class="mord mathit" style="margin-right:0.03588em;">v</span></span></span></span>',
         "idx": '<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mi>d</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">idx</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base"><span class="mord mathit">i</span><span class="mord mathit">d</span><span class="mord mathit">x</span></span></span></span>',
@@ -270,9 +282,16 @@
             add: function(e) {
                 this.reset(null, this.precision);
                 var result = this.hll.add(murmurhash3_32_gc(this.data, 100));
+                var count = this.hll.count();
                 result["data"] = this.data;
+                result["E"] = Math.round(count.estimate, 0);
+                result["m"] = count.m;
                 this.result = result;
-                this.registers = buckets_to_rows(this.hll.buckets, 64);
+                if (this.result.m > 8192) {
+                    this.registers = [0];
+                } else {
+                    this.registers = buckets_to_rows(this.hll.buckets, 64);
+                }
             },
             random: function(e) {
                 this.data = generateGuid();

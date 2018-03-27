@@ -44,7 +44,7 @@ You ask your boss, do you need _an exact count_ or just an approximate.
 
 With figures like number of unique IP addresses, does it really matter if you're a slight bit out from the real number? 
 
-This is where HyperLogLog shines because as you've seen, the core is the registers is just an array of bytes. With the top precision (16) making 65,536 registers available for use, the memory used is just 512KiB[1]
+This is where HyperLogLog shines because as you've seen, the core is the registers is just an array of bytes. With the top precision (16) making 65,536 registers available for use, the memory used is just 512KiB[^1]
 
 <figure class="figure" style="margin-top:10px; margin-bottom:10px;">
     <img class="figure-img img-fluid" src="/img/merge3.png" />
@@ -66,6 +66,7 @@ This
 * Uses a lot less memory
 * Uses a lot less bandwidth 
 * Is much faster. 
+* Very easy to parallelize 
 
 
-[1] Note that some implementations of HyperLogLog use a _sparse_ representation of the registers, which saves even more memory. See HyperLogLog++
+[^1]: Note that some implementations of HyperLogLog use a _sparse_ representation of the registers, which saves even more memory. See [HyperLogLog++](https://research.google.com/pubs/pub40671.html)

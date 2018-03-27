@@ -123,7 +123,7 @@
 
 <p>With figures like number of unique IP addresses, does it really matter if you&rsquo;re a slight bit out from the real number?</p>
 
-<p>This is where HyperLogLog shines because as you&rsquo;ve seen, the core is the registers is just an array of bytes. With the top precision (16) making 65,536 registers available for use, the memory used is just 512KiB[1]</p>
+<p>This is where HyperLogLog shines because as you&rsquo;ve seen, the core is the registers is just an array of bytes. With the top precision (16) making 65,536 registers available for use, the memory used is just 512KiB<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
 
 <figure class="figure" style="margin-top:10px; margin-bottom:10px;">
     <img class="figure-img img-fluid" src="https://djhworld.github.io/hyperloglog/img/merge3.png" />
@@ -143,9 +143,17 @@
 <li>Uses a lot less memory</li>
 <li>Uses a lot less bandwidth</li>
 <li>Is much faster.</li>
+<li>Very easy to parallelize</li>
 </ul>
+<div class="footnotes">
 
-<p>[1] Note that some implementations of HyperLogLog use a <em>sparse</em> representation of the registers, which saves even more memory. See HyperLogLog++</p>
+<hr />
+
+<ol>
+<li id="fn:1">Note that some implementations of HyperLogLog use a <em>sparse</em> representation of the registers, which saves even more memory. See <a href="https://research.google.com/pubs/pub40671.html">HyperLogLog++</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+</ol>
+</div>
 
     </section>
 </article>

@@ -18,6 +18,9 @@ This website only touches upon the details of the original paper, since it was r
 * PrestoDB `approx_distinct` [SQL function](https://prestodb.io/docs/current/functions/aggregate.html#approx_distinct) uses HyperLogLog
 * Github [topic page](https://github.com/topics/hyperloglog) for some implementations of HyperLogLog
 
+## Command line tool
+
+I wrote a tool called [card](https://github.com/djhworld/card) that you can use to determine the approximate cardinality of an input (stdin or file), this makes use of the the [HyperLogLog++ library](https://github.com/clarkduvall/hyperloglog) written by [Clark Duvall](https://github.com/clarkduvall)
 
 ## Background reading
 

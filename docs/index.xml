@@ -38,7 +38,7 @@ Maybe it won&amp;rsquo;t be useful to others, maybe nobody will care, but who kn
       
       <guid>https://djhworld.github.io/hyperloglog/adding/</guid>
       <description>Adding The core of a HyperLogLog instance consists of:
- a series of registers (), sometimes implemented as an array a precision () argument, usually between 4 and 16, specified on creation  The precision determines how many registers there are available More registers reduce the error in the count, at the expense of more memory   a hash function () which hashes the data into a 32-bit integer  Adding an item might ultimately end up changing the state of the registers, as you will see below.</description>
+ a series of registers (), sometimes implemented as an array a precision () argument, usually between 4 and 16, specified on creation  The precision determines how many registers there are available More registers reduce the error in the count, at the expense of more memory   a hash function () which hashes the data into a 32-bit integer  The aim of HyperLogLog is to estimate the cardinality () based on the current state of the registers.</description>
     </item>
     
     <item>
@@ -59,7 +59,7 @@ The brute force approach would be to provision a set data-structure, and go thro
       
       <guid>https://djhworld.github.io/hyperloglog/more/</guid>
       <description>More This website only touches upon the details of the original paper, since it was released, some improvements have been made such as HyperLogLog++, which
- Uses 64-bit integers rather than 32-bit Introduces sparse representation for the registers to save memory (rather than having one huge array) Introduces a further set of bias corrections to improve the count at lower cardinalities  Seen out in the wild  Redis PF* commands use HyperLogLog PrestoDB approx_distinct SQL function uses HyperLogLog Github topic page for some implementations of HyperLogLog  Background reading  Using Linear Counting, LogLog, and HyperLogLog to Estimate Cardinality Damn Cool Algorithms: Cardinality estimation  Previous research HyperLogLog builds on the shoulders of:</description>
+ Uses 64-bit integers rather than 32-bit Introduces sparse representation for the registers to save memory (rather than having one huge array) Introduces a further set of bias corrections to improve the count at lower cardinalities  Seen out in the wild  Redis PF* commands use HyperLogLog PrestoDB approx_distinct SQL function uses HyperLogLog Github topic page for some implementations of HyperLogLog  Command line tool I wrote a tool called card that you can use to determine the approximate cardinality of an input (stdin or file), this makes use of the the HyperLogLog++ library written by Clark Duvall</description>
     </item>
     
   </channel>

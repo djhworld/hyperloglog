@@ -10,6 +10,7 @@ The site consists of the following sections
 
 * A section detailing how items are [added](adding) to a HyperLogLog instance
 * A section detailing how [the count is appoximated](counting) 
+* A section detailing how HyperLogLog [supports merging](merging)
 * A section that describes where to [go next](more) for implementations and uses
 
 # Elevator pitch
